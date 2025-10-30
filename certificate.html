@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDGs 性別平權證書</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Microsoft JhengHei", sans-serif;
+    background: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  #certificateContainer {
+    background: #fff;
+    width: 800px;
+    max-width: 90%;
+    padding: 60px 40px;
+    text-align: center;
+    border: 10px solid #4caf50;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    position: relative;
+  }
+
+  /* 內部裝飾線條 */
+  #certificateContainer::before,
+  #certificateContainer::after {
+    content: "";
+    position: absolute;
+    width: calc(100% - 60px);
+    height: calc(100% - 60px);
+    border: 2px dashed #4caf50;
+    top: 30px;
+    left: 30px;
+    border-radius: 15px;
+    pointer-events: none;
+  }
+
+  #certificateContainer h1 {
+    font-size: 36px;
+    color: #4caf50;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 1px #aaa;
+  }
+
+  #certificateContainer h2 {
+    font-size: 28px;
+    margin: 15px 0;
+    color: #333;
+  }
+
+  #certificateContainer p {
+    font-size: 20px;
+    margin: 20px 0;
+    color: #333;
+  }
+
+  #nameInput {
+    font-size: 20px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 2px solid #4caf50;
+    width: 250px;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  #downloadBtn {
+    margin-top: 25px;
+    padding: 12px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  @media print {
+    #nameInput, #downloadBtn {
+      display: none;
+    }
+    body {
+      background: white;
+    }
+    #certificateContainer {
+      box-shadow: none;
+      border: 10px solid #4caf50;
+      width: 100%;
+      max-width: 100%;
+    }
+    #certificateContainer::before,
+    #certificateContainer::after {
+      display: none;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<div id="certificateContainer">
+  <h1>SDGs 性別平權小達人</h1>
+  <p>恭喜</p>
+  <h2 id="userName">[請輸入姓名]</h2>
+  <p>成功完成 SDGs 性別平權挑戰！</p>
+  <input type="text" id="nameInput" placeholder="請輸入你的姓名">
+  <br>
+  <button id="downloadBtn">下載 / 列印證書</button>
+</div>
+
+<script>
+const nameInput = document.getElementById("nameInput");
+const userName = document.getElementById("userName");
+const downloadBtn = document.getElementById("downloadBtn");
+
+// 使用者輸入姓名即時更新證書
+nameInput.addEventListener("input", ()=>{
+  const name = nameInput.value.trim();
+  userName.textContent = name ? name : "[請輸入姓名]";
+});
+
+// 列印證書
+downloadBtn.addEventListener("click", ()=>{
+  if(!nameInput.value.trim()){
+    alert("請先輸入姓名再下載！");
+    return;
+  }
+  window.print();
+});
+</script>
+
+</body>
+</html>

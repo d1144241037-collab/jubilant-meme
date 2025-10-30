@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDGs 性別平權 - 情境題（第二關）</title>
+<style>
+  body {
+    margin: 0;
+    font-family: "Microsoft JhengHei", sans-serif;
+    background: url('3.jpg') no-repeat center center/cover;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  header {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px black;
+    z-index: 5;
+  }
+
+  #score {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px black;
+    z-index: 5;
+  }
+
+  .flower {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    background: url('4.png') no-repeat center center/contain;
+    cursor: pointer;
+    transition: transform 0.3s;
+    animation: float 4s infinite ease-in-out;
+  }
+
+  .flower:hover {
+    transform: scale(1.1);
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  #instructionBox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+    padding: 30px;
+    width: 80%;
+    max-width: 600px;
+    text-align: left;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    z-index: 20;
+  }
+
+  #instructionBox h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  #startBtn {
+    display: block;
+    margin: 20px auto 0;
+    padding: 15px 40px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  #questionBox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.95);
+    border-radius: 10px;
+    padding: 25px;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    display: none;
+    z-index: 10;
+  }
+
+  .dropzone {
+    width: 45%;
+    min-height: 120px;
+    border: 3px dashed #888;
+    border-radius: 10px;
+    display: inline-block;
+    vertical-align: top;
+    margin: 10px;
+    padding: 10px;
+  }
+
+  .dropzone h4 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  .draggable {
+    background: #ff7f50;
+    color: white;
+    padding: 8px;
+    margin: 8px;
+    border-radius: 6px;
+    cursor: grab;
+  }
+
+  #finishBox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+    padding: 30px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.6);
+    display: none;
+    z-index: 20;
+  }
+
+  #finishBox h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  #finishBox button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  }
+
+  #finishBox button.retry {
+    background-color: #e53935;
+    color: white;
+  }
+
+  #finishBox button.next {
+    background-color: white;
+    color: #4caf50;
+    font-weight: bold;
+    border: 3px solid #4caf50;
+  }
+
+  audio {
+    display: none;
+  }
+
+</style>
+</head>
+<body>
+
+<audio autoplay loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<header>SDGs 性別平權 - 情境題</header>
+<div id="score" style="display:none;">答對題數：0 / 10</div>
+
+<!-- 遊戲說明 -->
+<div id="instructionBox">
+  <h2>遊戲說明</h2>
+  <p>☆請點選畫面中的花朵，每組花朵會搭配 1 個題組。</p>
+  <p>☆每個題組都有 2 個觀念，請將行為或語句拖進「性別平等 / 不平等」兩邊的框中。</p>
+  <p>☆結局會依答對題數給予不同等級的結果，例如：再加油、進步中、平權達人。</p>
+  <p>☆全部做答結束，會得到對應的挑戰級別。</p>
+  <p>☛如果等級是「再加油」、「進步中」，會出現「再次挑戰」按鈕，請重新挑戰。</p>
+  <p>☛如果等級是平權達人(答對 8 題以上)，會出現「下載學習證書」按鈕，可以製作個人的過關證書喔！</p>
+  <p>☆挑戰結果對應的級別：0-3 題為「再加油」、4-7 題為「進步中」、8-10 題為「平權達人」。</p>
+  <button id="startBtn">開始遊戲</button>
+</div>
+
+<!-- 問題區 -->
+<div id="questionBox">
+  <h3>請將下列行為拖曳到正確的分類中</h3>
+  <div id="dragItems"></div>
+  <div>
+    <div class="dropzone" id="equalZone">
+      <h4>性別平等 ✅</h4>
+    </div>
+    <div class="dropzone" id="unequalZone">
+      <h4>性別不平等 ❌</h4>
+    </div>
+  </div>
+  <button id="submitBtn">提交答案</button>
+</div>
+
+<!-- 結果視窗 -->
+<div id="finishBox">
+  <h2 id="resultLevel"></h2>
+  <button id="retryBtn" class="retry">重新答題</button>
+  <button id="nextBtn" class="next" style="display:none;">下載學習證書</button>
+</div>
+
+<script>
+const questionGroups = [
+  { items:[ {text:"女生也能成為公司主管", type:"equal"}, {text:"女性應只負責家務", type:"unequal"} ] },
+  { items:[ {text:"男女都能參加舞蹈社", type:"equal"}, {text:"理工科只適合男生", type:"unequal"} ] },
+  { items:[ {text:"學校提供男女同樣運動資源", type:"equal"}, {text:"比賽只頒獎給男學生", type:"unequal"} ] },
+  { items:[ {text:"爸爸也能請育嬰假", type:"equal"}, {text:"女生不適合當科學家", type:"unequal"} ] },
+  { items:[ {text:"家庭家務由成員共同分擔", type:"equal"}, {text:"男生不用幫忙洗碗", type:"unequal"} ] }
+];
+
+let correct=0, answered=0;
+const startBtn = document.getElementById("startBtn");
+const instructionBox = document.getElementById("instructionBox");
+const scoreText = document.getElementById("score");
+const questionBox = document.getElementById("questionBox");
+const dragItems=document.getElementById("dragItems");
+const equalZone=document.getElementById("equalZone");
+const unequalZone=document.getElementById("unequalZone");
+const submitBtn=document.getElementById("submitBtn");
+const finishBox=document.getElementById("finishBox");
+const resultLevel=document.getElementById("resultLevel");
+const retryBtn=document.getElementById("retryBtn");
+const nextBtn=document.getElementById("nextBtn");
+
+// 開始遊戲
+startBtn.onclick = ()=>{
+  instructionBox.style.display="none";
+  scoreText.style.display="block";
+  generateFlowers();
+};
+
+// 產生花朵
+function generateFlowers(){
+  for(let i=0;i<5;i++){
+    const flower=document.createElement("div");
+    flower.className="flower";
+    flower.style.left=(Math.random()*80+10)+"%";
+    flower.style.top=(Math.random()*40+50)+"%";
+    flower.dataset.id=i;
+    flower.addEventListener("click", ()=>openQuestion(flower));
+    document.body.appendChild(flower);
+  }
+}
+
+function openQuestion(flower){
+  flower.style.display="none";
+  const qIndex=parseInt(flower.dataset.id);
+  const items=questionGroups[qIndex].items;
+  dragItems.innerHTML="";
+  equalZone.innerHTML="<h4>性別平等 ✅</h4>";
+  unequalZone.innerHTML="<h4>性別不平等 ❌</h4>";
+  items.forEach(item=>{
+    const div=document.createElement("div");
+    div.className="draggable";
+    div.textContent=item.text;
+    div.draggable=true;
+    div.dataset.type=item.type;
+    dragItems.appendChild(div);
+  });
+  questionBox.style.display="block";
+  enableDragDrop();
+}
+
+function enableDragDrop(){
+  const draggables=document.querySelectorAll(".draggable");
+  const dropzones=document.querySelectorAll(".dropzone");
+
+  draggables.forEach(d=>{
+    d.addEventListener("dragstart", e=>{
+      e.dataTransfer.setData("text", e.target.dataset.type);
+      e.dataTransfer.setData("text-id", e.target.textContent);
+    });
+  });
+
+  dropzones.forEach(z=>{
+    z.addEventListener("dragover", e=>e.preventDefault());
+    z.addEventListener("drop", e=>{
+      e.preventDefault();
+      const text=e.dataTransfer.getData("text-id");
+      const type=e.dataTransfer.getData("text");
+      if([...z.querySelectorAll(".draggable")].some(d=>d.textContent===text)) return;
+      const newItem=document.createElement("div");
+      newItem.className="draggable";
+      newItem.textContent=text;
+      newItem.dataset.type=type;
+      z.appendChild(newItem);
+    });
+  });
+}
+
+submitBtn.onclick=()=>{
+  const eqItems=equalZone.querySelectorAll(".draggable");
+  const unItems=unequalZone.querySelectorAll(".draggable");
+  let localCorrect=0;
+  eqItems.forEach(item=>{ if(item.dataset.type==="equal") localCorrect++; });
+  unItems.forEach(item=>{ if(item.dataset.type==="unequal") localCorrect++; });
+  correct+=localCorrect;
+  answered+=2;
+  scoreText.textContent=`答對題數：${correct} / 10`;
+  questionBox.style.display="none";
+  if(answered>=10) showResult();
+};
+
+function showResult(){
+  finishBox.style.display="block";
+  let level="";
+  if(correct<=3) level="🌱 再加油";
+  else if(correct<=7) level="🌼 進步中";
+  else level="🌟 平權達人";
+
+  resultLevel.textContent=`你的等級是：${level}`;
+  if(level==="🌟 平權達人"){
+    nextBtn.style.display="inline-block";
+    retryBtn.style.display="none";
+  }else{
+    nextBtn.style.display="none";
+    retryBtn.style.display="inline-block";
+  }
+}
+
+retryBtn.onclick=()=>location.reload();
+nextBtn.onclick=()=>location.href="certificate.html";
+
+</script>
+</body>
+</html>
