@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SDGs 性別平權</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Microsoft JhengHei", sans-serif;
+      background: url('1.jpg') no-repeat center center/cover;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    header {
+      position: absolute;
+      top: 10px;
+      left: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 1px 1px 3px black;
+      z-index: 5;
+    }
+
+    #score {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 1px 1px 3px black;
+      z-index: 5;
+    }
+
+    .balloon {
+      position: absolute;
+      top: 0;
+      width: 80px;
+      height: 100px;
+      background: url('2.jpg') no-repeat center center/contain;
+      animation: float 8s infinite ease-in-out;
+      opacity: 0.9;
+      cursor: pointer;
+      transition: transform 0.3s;
+      z-index: 1;
+    }
+
+    .balloon:hover {
+      transform: scale(1.1);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    #questionBox {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      display: none;
+      z-index: 10;
+    }
+
+    #questionBox button {
+      display: block;
+      margin: 10px auto;
+      width: 80%;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      background-color: #ff7f50;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #resultBox {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      padding: 30px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+      display: none;
+      z-index: 20;
+    }
+
+    #resultBox button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #resultBox button.retry {
+      background-color: #e53935;
+    }
+
+    #startScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: left;
+      z-index: 30;
+    }
+
+    #startBox {
+      background: rgba(255,255,255,0.95);
+      color: black;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      line-height: 1.8;
+    }
+
+    #startBtn {
+      margin-top: 20px;
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: #ff7f50;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    #musicControl {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.8);
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 5;
+    }
+  </style>
+</head>
+
+<body>
+  <header>SDGs 性別平權</header>
+  <div id="score">答對題數：0 / 10</div>
+
+  <!-- 啟動畫面 -->
+  <div id="startScreen">
+    <div id="startBox">
+      <h2 style="text-align:center;">🌏 遊戲說明 🌏</h2>
+      <p>☆ 請點選畫面中的熱汽球，每個熱汽球搭配 1 題單選題。</p>
+      <p>☆ 答題後，不論對、錯，答過題的熱汽球都會消失。</p>
+      <p>☆ 答對的題數如果小於 8 題，就出現重新挑戰的訊息與按鈕，請重新挑戰。</p>
+      <p>☆ 答對 8 題(含)以上，可以進入下一個關卡。</p>
+      <p>☆ 全部的關卡完成，可以製作個人的過關證書喔！</p>
+      <button id="startBtn">開始遊戲 ▶️</button>
+    </div>
+  </div>
+
+  <!-- 題目視窗 -->
+  <div id="questionBox">
+    <h3 id="questionText"></h3>
+    <div id="options"></div>
+  </div>
+
+  <!-- 結果視窗 -->
+  <div id="resultBox">
+    <h2 id="resultMessage"></h2>
+    <button id="retryBtn" class="retry">重新挑戰</button>
+    <button id="nextBtn" style="display:none;">前往下一關</button>
+  </div>
+
+  <!-- 音樂控制 -->
+  <button id="musicControl">🎵 播放音樂</button>
+  <audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/audio/2023/07/19/audio_9094e179f4.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const questions = [
+      { q: "哪一項行為有助於性別平權？", opts: ["限制女性職業選擇", "尊重每個人選擇職業的自由", "讓男性不能請育嬰假"], ans: 1 },
+      { q: "SDGs 中「性別平權」是第幾項目標？", opts: ["第1項", "第5項", "第10項"], ans: 1 },
+      { q: "以下哪個做法促進兩性平等？", opts: ["只讓男生上大學", "推動同工同酬", "女性禁止投票"], ans: 1 },
+      { q: "性別平權的主要目的是什麼？", opts: ["讓女性比男性更有權力", "消除基於性別的不平等", "禁止男性從事家務"], ans: 1 },
+      { q: "在職場中推動性別平權的方法是？", opts: ["給男性較高薪水", "依照能力給予平等機會", "女性不能當主管"], ans: 1 },
+      { q: "哪一個是性別刻板印象？", opts: ["女生比較不會數學", "每個人都有不同興趣", "男生也能照顧孩子"], ans: 0 },
+      { q: "為什麼性別平權對社會重要？", opts: ["促進多元與公平發展", "讓一方性別更強勢", "減少工作機會"], ans: 0 },
+      { q: "以下哪種政策支持性別平權？", opts: ["設立女性領導培訓計畫", "限制女性職位", "禁止男性育嬰假"], ans: 0 },
+      { q: "哪個例子顯示性別不平等？", opts: ["女性薪資比男性低", "男女有同等升遷機會", "男性請育嬰假"], ans: 0 },
+      { q: "在家庭中實踐性別平權的方法是？", opts: ["共同分擔家務", "家事是女生的責任", "男性不應帶孩子"], ans: 0 }
+    ];
+
+    const scoreText = document.getElementById("score");
+    const questionBox = document.getElementById("questionBox");
+    const questionText = document.getElementById("questionText");
+    const optionsDiv = document.getElementById("options");
+    const resultBox = document.getElementById("resultBox");
+    const resultMessage = document.getElementById("resultMessage");
+    const retryBtn = document.getElementById("retryBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const bgMusic = document.getElementById("bgMusic");
+    const musicControl = document.getElementById("musicControl");
+    const startScreen = document.getElementById("startScreen");
+    const startBtn = document.getElementById("startBtn");
+
+    let correct = 0;
+    let answered = 0;
+    let balloons = [];
+
+    // 啟動遊戲
+    startBtn.onclick = () => {
+      startScreen.style.display = "none";
+      startGame();
+      bgMusic.play();
+      musicControl.textContent = "⏸ 暫停音樂";
+      playing = true;
+    };
+
+    // 建立熱氣球
+    function startGame() {
+      for (let i = 0; i < 10; i++) {
+        const balloon = document.createElement("div");
+        balloon.className = "balloon";
+        const x = Math.random() * 80 + 10;
+        const y = Math.random() * 30 + 5;
+        const scale = [1, 1.2, 1.5][Math.floor(Math.random() * 3)];
+        balloon.style.left = x + "%";
+        balloon.style.top = y + "%";
+        balloon.style.transform = `scale(${scale})`;
+        balloon.dataset.id = i;
+        balloon.addEventListener("click", () => openQuestion(balloon));
+        document.body.appendChild(balloon);
+        balloons.push(balloon);
+      }
+    }
+
+    // 顯示題目
+    function openQuestion(balloon) {
+      const qIndex = parseInt(balloon.dataset.id);
+      const q = questions[qIndex];
+      questionText.textContent = q.q;
+      optionsDiv.innerHTML = "";
+      q.opts.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => checkAnswer(balloon, i === q.ans);
+        optionsDiv.appendChild(btn);
+      });
+      questionBox.style.display = "block";
+    }
+
+    // 檢查答案
+    function checkAnswer(balloon, isCorrect) {
+      if (isCorrect) correct++;
+      answered++;
+      scoreText.textContent = `答對題數：${correct} / 10`;
+      questionBox.style.display = "none";
+      balloon.classList.add("hidden");
+
+      if (correct >= 8) {
+        showResult(true);
+      } else if (answered === 10) {
+        showResult(false);
+      }
+    }
+
+    // 顯示結果
+    function showResult(passed) {
+      resultBox.style.display = "block";
+      if (passed) {
+        resultMessage.textContent = `太棒了！你答對 ${correct} 題，成功通過第一關！`;
+        nextBtn.style.display = "inline-block";
+      } else {
+        resultMessage.textContent = `你答對 ${correct} 題，未達通關標準，請再挑戰一次！`;
+        nextBtn.style.display = "none";
+      }
+    }
+
+    retryBtn.onclick = () => location.reload();
+    nextBtn.onclick = () => location.href = "level2.html";
+
+    // 背景音樂控制
+    let playing = false;
+    musicControl.onclick = () => {
+      if (!playing) {
+        bgMusic.play();
+        musicControl.textContent = "⏸ 暫停音樂";
+        playing = true;
+      } else {
+        bgMusic.pause();
+        musicControl.textContent = "🎵 播放音樂";
+        playing = false;
+      }
+    };
+  </script>
+</body>
+</html>
